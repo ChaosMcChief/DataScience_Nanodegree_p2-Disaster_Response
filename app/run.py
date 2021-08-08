@@ -16,14 +16,31 @@ app = Flask(__name__)
 
 
 def tokenize(text):
+    """
+    Processes the text by replacing any URLs, tokenizing, lemmatizing and removing stop words.
+    
+    Input:
+    text: str  -   Raw input text
+    
+    Output:
+    clean_tokens: list  -   List of tokens containing the processed text
+    
+    """
+    
+    url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    stop_words = stopwords.words("english")
+    
+    # replacing urls
+    detected_urls = re.findall(url_regex, text)
+    for url in detected_urls:
+        text = text.replace(url, "urlplaceholder")
+
+    # tokenizing the text
     tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
 
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
+    # lemmatizing and removing stop words
+    clean_tokens = [WordNetLemmatizer().lemmatize(w) for w in tokens if w not in stop_words]
+    
     return clean_tokens
 
 # load data
