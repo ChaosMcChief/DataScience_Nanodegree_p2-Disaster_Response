@@ -59,6 +59,10 @@ def clean_data(df):
         # convert column from string to numeric
         categories[column] = categories[column].astype(np.int)
     
+    # Replacing any 2 in the related category with a 1. Since we don't know anything about that class, I'll take the class with
+    # the most entries. This should not be changing the results much.
+    categories['related']=categories['related'].map(lambda x: 1 if x == 2 else x)
+    
     # 4) replace the 'categories' column in the original DataFrame
     df.drop('categories', axis=1, inplace=True)
     df = pd.concat((df, categories), axis=1)
